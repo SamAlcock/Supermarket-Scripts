@@ -24,7 +24,7 @@ public class ItemHandling : MonoBehaviour
     }
     double CalculateItemNumberDisplay(MeshRenderer shelf_renderer, MeshRenderer item_renderer)
     {
-        float shelf_size = shelf_renderer.bounds.size.x; // get shelf width
+        float shelf_size = shelf_renderer.bounds.size.x - 0.15f; // get shelf width (subtracting to avoid overhang)
         float item_size = item_renderer.bounds.size.x; // get item width
 
         double number_to_loop = System.Math.Floor(shelf_size / item_size); // divide shelf width by item width to get number of items that fit on shelf, then round down to avoid floating items
@@ -34,8 +34,8 @@ public class ItemHandling : MonoBehaviour
     float GetXOffset(MeshRenderer item_renderer)
     {
         float item_size = item_renderer.bounds.size.x; // get item width
-        float x_offset = 0.76f;
-        if (item_size > 0.76f)
+        float x_offset = 0.9f;
+        if (item_size > 0.9f)
         {
             x_offset = item_size / 2;
         }
@@ -49,7 +49,7 @@ public class ItemHandling : MonoBehaviour
         MeshRenderer renderer = item.GetComponent<MeshRenderer>();
 
         float original_y = shelf.transform.position.y; // to help with readability
-        float[] y_offsets = { original_y + 1.55f, original_y + 1.12f, original_y + 0.69f, original_y + 0.26f }; // offsets for each shelf row
+        float[] y_offsets = { original_y + 1.565f, original_y + 1.12f, original_y + 0.66f, original_y + 0.2f }; // offsets for each shelf row
         
         float x_gap = renderer.bounds.size.x;
 
