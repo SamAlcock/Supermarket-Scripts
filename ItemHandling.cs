@@ -16,12 +16,6 @@ public class ItemHandling : MonoBehaviour
             FillShelf(items[i], shelves[i]);
         }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     double CalculateItemNumberDisplay(MeshRenderer shelf_renderer, MeshRenderer item_renderer)
     {
         float shelf_size = shelf_renderer.bounds.size.x - 0.15f; // get shelf width (subtracting to avoid overhang)
@@ -31,16 +25,22 @@ public class ItemHandling : MonoBehaviour
 
         return number_to_loop;
     }
-    float GetXOffset(MeshRenderer item_renderer)
+    float GetOffset(MeshRenderer item_renderer)
     {
         float item_size = item_renderer.bounds.size.x; // get item width
-        float x_offset = 0.9f;
+        float offset = 0.9f;
         if (item_size > 0.9f)
         {
-            x_offset = item_size / 2;
+            offset = item_size / 2;
         }
 
-        return x_offset;
+        return offset;
+    }
+
+    float GetRotation(GameObject shelf)
+    {
+        float rotation = shelf.transform.eulerAngles.y;
+        return rotation;
     }
     void FillShelf(GameObject item, GameObject shelf)
     {
@@ -53,21 +53,40 @@ public class ItemHandling : MonoBehaviour
         
         float x_gap = renderer.bounds.size.x;
 
-        float x_offset = GetXOffset(renderer);
-        float z_offset = 0; // may be needed for shelves rotated differently
+        float offset = GetOffset(renderer);
 
         int shelves = 4;
 
         double loop = CalculateItemNumberDisplay(shelf_renderer, renderer);
 
+        float rotation = GetRotation(shelf);
+        Vector3 gap = new();
+        Vector3 item_rotation = new();
+
+        if (rotation == 0 || rotation == 360)
+        {
+            gap = new(0, 0, x_gap);
+            item_rotation = new(0, 90, 0);
+            Vector3 offsets = new(0, 0, offset);
+            shelf.transform.position += offsets;
+        }
+        else
+        {
+            gap = new(x_gap, 0, 0);
+            item_rotation = new(0, 0, 0);
+            Vector3 offsets = new(offset, 0, 0);
+            shelf.transform.position += offsets;
+        }
+
         for (int i = 0; i < shelves; i++)
         {
-            Vector3 position = new Vector3(shelf.transform.position.x + x_offset, shelf.transform.position.y + y_offsets[i], shelf.transform.position.z); // get starting coordiantes of shelf row
+            Vector3 position = new Vector3(shelf.transform.position.x, shelf.transform.position.y + y_offsets[i], shelf.transform.position.z); // get starting coordiantes of shelf row
 
             for (int j = 0; j < loop; j++)
             {
-                Instantiate(item, position, Quaternion.identity); // create instance of current item
-                position.x -= x_gap; // decrement by gap
+                Instantiate(item, position, Quaternion.Euler(item_rotation)); // create instance of current item
+                item.transform.Rotate(0, rotation, 0, Space.Self);
+                position -= gap; // decrement by gap
 
             }
         }
