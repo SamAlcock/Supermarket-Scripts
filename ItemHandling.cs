@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,16 +19,54 @@ public class ItemHandling : MonoBehaviour
     }
     public class ShelfData
     {
-        public float[] yOffset { get; set;}
+        public List<float> yOffset { get; set;}
         public float shelfWidth { get; set;}
     }
-    void DetermineObjectType(GameObject item)
+    ShelfData DetermineObjectType(GameObject shelf)
     {
-        if (item.name.Contains("Shelf_kicg9f"))
+        var shelfData = new ShelfData();
+        GameObject singleShelf;
+        if (shelf.name.Contains("Shelf_kicg9f")) // Normal shelf
         {
+            shelfData.yOffset.Add(shelf.transform.position.y + 1.565f); // Add corresponding y offsets
+            shelfData.yOffset.Add(shelf.transform.position.y + 1.12f);
+            shelfData.yOffset.Add(shelf.transform.position.y + 0.66f);
+            shelfData.yOffset.Add(shelf.transform.position.y + 0.2f);
 
+            singleShelf = GameObject.Find("Shelf_kicg9f_shelf01"); // Find a singular shelf to get width
         }
+        else if (shelf.name.Contains("Shelf_6h7vop")) // Grated shelf
+        {
+            shelfData.yOffset.Add(shelf.transform.position.y + 0.613f);
+            shelfData.yOffset.Add(shelf.transform.position.y + 1.038f);
+            shelfData.yOffset.Add(shelf.transform.position.y + 1.463f);
+            shelfData.yOffset.Add(shelf.transform.position.y + 1.888f);
+
+            singleShelf = GameObject.Find("Grated Shelf Width");
+        }
+        else if (shelf.name.Contains("Fridge_4ttiif")) // Big fridge
+        {
+            shelfData.yOffset.Add(shelf.transform.position.y + 0.25f);
+            shelfData.yOffset.Add(shelf.transform.position.y + 0.53f);
+            shelfData.yOffset.Add(shelf.transform.position.y + 0.85f);
+            shelfData.yOffset.Add(shelf.transform.position.y + 1.17f);
+            shelfData.yOffset.Add(shelf.transform.position.y + 1.49f);
+
+            singleShelf = GameObject.Find("Big Fridge Width");
+        }
+        else
+        {
+            Debug.Log("Warning: Shelf type not recognised");
+            singleShelf = GameObject.Find("Shelf_kicg9f_shelf01");
+        }
+        
+        MeshRenderer shelfRenderer = singleShelf.GetComponent<MeshRenderer>();
+
+        shelfData.shelfWidth = shelfRenderer.bounds.size.x;
+
+        return shelfData;
     }
+
     double CalculateItemNumberDisplay(MeshRenderer shelfRenderer, MeshRenderer itemRenderer)
     {
         float shelfSize = shelfRenderer.bounds.size.x - 0.05f; // get shelf width (subtracting to avoid overhang)
