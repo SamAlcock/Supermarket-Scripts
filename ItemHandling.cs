@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,38 +20,41 @@ public class ItemHandling : MonoBehaviour
     }
     public class ShelfData
     {
-        public List<float> yOffset { get; set;}
-        public float shelfWidth { get; set;}
+        public float[] YOffset { get; set;}
+        public float ShelfWidth { get; set;}
     }
     ShelfData DetermineObjectType(GameObject shelf)
     {
-        var shelfData = new ShelfData();
+        
         GameObject singleShelf;
+
+        ShelfData shelfData = new ShelfData();
+
         if (shelf.name.Contains("Shelf_kicg9f")) // Normal shelf
         {
-            shelfData.yOffset.Add(shelf.transform.position.y + 1.565f); // Add corresponding y offsets
-            shelfData.yOffset.Add(shelf.transform.position.y + 1.12f);
-            shelfData.yOffset.Add(shelf.transform.position.y + 0.66f);
-            shelfData.yOffset.Add(shelf.transform.position.y + 0.2f);
+            Debug.Log("It's a normal shelf!");
+            // Set y offsets
+            float[] yOffset = { shelf.transform.position.y + 1.565f, shelf.transform.position.y + 1.12f, shelf.transform.position.y + 0.66f, shelf.transform.position.y + 0.2f };
+
+            shelfData.YOffset = yOffset;
 
             singleShelf = GameObject.Find("Shelf_kicg9f_shelf01"); // Find a singular shelf to get width
         }
         else if (shelf.name.Contains("Shelf_6h7vop")) // Grated shelf
         {
-            shelfData.yOffset.Add(shelf.transform.position.y + 0.613f);
-            shelfData.yOffset.Add(shelf.transform.position.y + 1.038f);
-            shelfData.yOffset.Add(shelf.transform.position.y + 1.463f);
-            shelfData.yOffset.Add(shelf.transform.position.y + 1.888f);
+            Debug.Log("It's a grated shelf!");
+            float[] yOffset = { shelf.transform.position.y + 0.613f, shelf.transform.position.y + 1.038f, shelf.transform.position.y + 1.463f, shelf.transform.position.y + 1.888f };
+
+            shelfData.YOffset = yOffset;
 
             singleShelf = GameObject.Find("Grated Shelf Width");
         }
         else if (shelf.name.Contains("Fridge_4ttiif")) // Big fridge
         {
-            shelfData.yOffset.Add(shelf.transform.position.y + 0.25f);
-            shelfData.yOffset.Add(shelf.transform.position.y + 0.53f);
-            shelfData.yOffset.Add(shelf.transform.position.y + 0.85f);
-            shelfData.yOffset.Add(shelf.transform.position.y + 1.17f);
-            shelfData.yOffset.Add(shelf.transform.position.y + 1.49f);
+            Debug.Log("It's a big fridge!");
+            float[] yOffset = { shelf.transform.position.y + 0.25f, shelf.transform.position.y + 0.53f, shelf.transform.position.y + 0.85f, shelf.transform.position.y + 1.17f, shelf.transform.position.y + 1.49f };
+
+            shelfData.YOffset = yOffset;
 
             singleShelf = GameObject.Find("Big Fridge Width");
         }
@@ -58,18 +62,22 @@ public class ItemHandling : MonoBehaviour
         {
             Debug.Log("Warning: Shelf type not recognised");
             singleShelf = GameObject.Find("Shelf_kicg9f_shelf01");
+            float[] yOffset = { };
         }
         
         MeshRenderer shelfRenderer = singleShelf.GetComponent<MeshRenderer>();
 
-        shelfData.shelfWidth = shelfRenderer.bounds.size.x;
+       
+
+        shelfData.ShelfWidth = shelfRenderer.bounds.size.x;
 
         return shelfData;
     }
 
-    double CalculateItemNumberDisplay(MeshRenderer shelfRenderer, MeshRenderer itemRenderer)
+    double CalculateItemNumberDisplay(ShelfData shelfData, MeshRenderer itemRenderer)
     {
-        float shelfSize = shelfRenderer.bounds.size.x - 0.05f; // get shelf width (subtracting to avoid overhang)
+        Debug.Log(shelfData.ShelfWidth);
+        float shelfSize = shelfData.ShelfWidth - 0.05f; // get shelf width (subtracting to avoid overhang)
         float itemSize = itemRenderer.bounds.size.x; // get item width
 
         double numberToLoop = System.Math.Floor(shelfSize / itemSize); // divide shelf width by item width to get number of items that fit on shelf, then round down to avoid floating items
@@ -95,16 +103,17 @@ public class ItemHandling : MonoBehaviour
     }
     void FillShelf(GameObject item, GameObject shelf)
     {
-        GameObject singleShelf = GameObject.Find("Shelf_kicg9f_shelf01");
-        MeshRenderer shelfRenderer = singleShelf.GetComponent<MeshRenderer>();
+        ShelfData shelfData = DetermineObjectType(shelf);
         MeshRenderer renderer = item.GetComponent<MeshRenderer>();
+
+        
 
         float originalY = shelf.transform.position.y; // to help with readability
         float[] yOffset = { originalY + 1.565f, originalY + 1.12f, originalY + 0.66f, originalY + 0.2f }; // offsets for each shelf row 
         float xGap = renderer.bounds.size.x;
         float offset = GetOffset(renderer);
         int shelves = 4;
-        double loop = CalculateItemNumberDisplay(shelfRenderer, renderer);
+        double loop = CalculateItemNumberDisplay(shelfData, renderer);
         float rotation = GetRotation(shelf);
 
         Vector3 gap = new();
