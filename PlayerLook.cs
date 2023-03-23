@@ -9,7 +9,7 @@ public class PlayerLook : MonoBehaviour
     [SerializeField] float minViewDistance = 25f;
     [SerializeField] Transform playerBody;
 
-    public float mouseSensitivity = 150f;
+    public float mouseSensitivity = 225f;
 
     float xRotation = 0f;
     

@@ -20,8 +20,9 @@ public class ItemHandling : MonoBehaviour
     }
     public class ShelfData
     {
-        public float[] YOffset { get; set;}
-        public float ShelfWidth { get; set;}
+        public string name { get; set; }
+        public float[] YOffset { get; set; }
+        public float ShelfWidth { get; set; }
     }
     ShelfData DetermineObjectType(GameObject shelf)
     {
@@ -32,29 +33,31 @@ public class ItemHandling : MonoBehaviour
 
         if (shelf.name.Contains("Shelf_kicg9f")) // Normal shelf
         {
-            Debug.Log("It's a normal shelf!");
             // Set y offsets
             float[] yOffset = { shelf.transform.position.y + 1.565f, shelf.transform.position.y + 1.12f, shelf.transform.position.y + 0.66f, shelf.transform.position.y + 0.2f };
 
             shelfData.YOffset = yOffset;
+            shelfData.name = "Normal shelf";
 
             singleShelf = GameObject.Find("Shelf_kicg9f_shelf01"); // Find a singular shelf to get width
+
         }
         else if (shelf.name.Contains("Shelf_6h7vop")) // Grated shelf
         {
-            Debug.Log("It's a grated shelf!");
-            float[] yOffset = { shelf.transform.position.y + 0.613f, shelf.transform.position.y + 1.038f, shelf.transform.position.y + 1.463f, shelf.transform.position.y + 1.888f };
+            float[] yOffset = { shelf.transform.position.y + 0.513f, shelf.transform.position.y + 0.938f, shelf.transform.position.y + 1.363f, shelf.transform.position.y + 1.79f };
 
             shelfData.YOffset = yOffset;
+            shelfData.name = "Grated shelf";
 
             singleShelf = GameObject.Find("Grated Shelf Width");
         }
         else if (shelf.name.Contains("Fridge_4ttiif")) // Big fridge
         {
-            Debug.Log("It's a big fridge!");
-            float[] yOffset = { shelf.transform.position.y + 0.25f, shelf.transform.position.y + 0.53f, shelf.transform.position.y + 0.85f, shelf.transform.position.y + 1.17f, shelf.transform.position.y + 1.49f };
+
+            float[] yOffset = { shelf.transform.position.y + 0.15f, shelf.transform.position.y + 0.43f, shelf.transform.position.y + 0.75f, shelf.transform.position.y + 1.07f, shelf.transform.position.y + 1.39f };
 
             shelfData.YOffset = yOffset;
+            shelfData.name = "Big fridge";
 
             singleShelf = GameObject.Find("Big Fridge Width");
         }
@@ -67,8 +70,6 @@ public class ItemHandling : MonoBehaviour
         
         MeshRenderer shelfRenderer = singleShelf.GetComponent<MeshRenderer>();
 
-       
-
         shelfData.ShelfWidth = shelfRenderer.bounds.size.x;
 
         return shelfData;
@@ -76,7 +77,6 @@ public class ItemHandling : MonoBehaviour
 
     double CalculateItemNumberDisplay(ShelfData shelfData, MeshRenderer itemRenderer)
     {
-        Debug.Log(shelfData.ShelfWidth);
         float shelfSize = shelfData.ShelfWidth - 0.05f; // get shelf width (subtracting to avoid overhang)
         float itemSize = itemRenderer.bounds.size.x; // get item width
 
@@ -106,42 +106,65 @@ public class ItemHandling : MonoBehaviour
         ShelfData shelfData = DetermineObjectType(shelf);
         MeshRenderer renderer = item.GetComponent<MeshRenderer>();
 
-        
-
-        float originalY = shelf.transform.position.y; // to help with readability
-        float[] yOffset = { originalY + 1.565f, originalY + 1.12f, originalY + 0.66f, originalY + 0.2f }; // offsets for each shelf row 
+        float[] yOffset = shelfData.YOffset; // offsets for each shelf row 
         float xGap = renderer.bounds.size.x;
         float offset = GetOffset(renderer);
-        int shelves = 4;
+        int shelves = 4; // Will need to be shelfData.YOffset.Length once other bugs have been fixed
         double loop = CalculateItemNumberDisplay(shelfData, renderer);
         float rotation = GetRotation(shelf);
+        float originalX;
 
         Vector3 gap = new();
         Vector3 itemRotation = new();
 
-        if (rotation == 0 || rotation == 360) // used to put items across shelf on z axis
+
+        if(shelfData.name == "Normal shelf")
         {
-            gap = new(0, 0, xGap);
-            itemRotation = new(0, 90, 0);
-            Vector3 offsets = new(0, 0, offset);
-            shelf.transform.position += offsets;
+            if (rotation == 0 || rotation == 360) // used to put items across shelf on z axis
+            {
+                gap = new(0, 0, xGap);
+                itemRotation = new(0, 90, 0);
+                Vector3 offsets = new(0, 0, offset);
+                shelf.transform.position += offsets; 
+            }
+            else
+            {
+                gap = new(xGap, 0, 0);
+                itemRotation = new(0, 0, 0);
+                Vector3 offsets = new(offset, 0, 0);
+                shelf.transform.position += offsets;
+            }
+
+            if (rotation == 90 || rotation == 0)
+            {
+                itemRotation = new(0, shelf.transform.eulerAngles.y + 90, 0);
+            }
+            originalX = shelf.transform.position.x;
         }
         else
         {
-            gap = new(xGap, 0, 0);
-            itemRotation = new(0, 0, 0);
-            Vector3 offsets = new(offset, 0, 0);
-            shelf.transform.position += offsets;
-        }
+            if (rotation == 90 || rotation == 270) // used to put items across shelf on z axis
+            {
+                gap = new(0, 0, xGap);
+                itemRotation = new(0, 90, 0);
+                Vector3 offsets = new(0, 0, offset);
+                shelf.transform.position += offsets;
+            }
+            else
+            {
+                gap = new(xGap, 0, 0);
+                itemRotation = new(0, 0, 0);
+                Vector3 offsets = new(offset, 0, 0);
+                shelf.transform.position += offsets;
+            }
+            originalX = shelf.transform.position.x + (shelfData.ShelfWidth / 2);
 
-        if(rotation == 90 || rotation == 0)
-        {
-            itemRotation = new(0, shelf.transform.eulerAngles.y + 90, 0);
         }
+        
 
         for (int i = 0; i < shelves; i++)
         {
-            Vector3 position = new Vector3(shelf.transform.position.x, shelf.transform.position.y + yOffset[i], shelf.transform.position.z); // get starting coordiantes of shelf row
+            Vector3 position = new Vector3(originalX, shelf.transform.position.y + yOffset[i], shelf.transform.position.z); // get starting coordiantes of shelf row
 
             for (int j = 0; j < loop; j++)
             {
