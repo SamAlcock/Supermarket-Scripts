@@ -87,8 +87,8 @@ public class ItemHandling : MonoBehaviour
     float GetOffset(MeshRenderer itemRenderer)
     {
         float itemSize = itemRenderer.bounds.size.x; // get item width
-        float offset = 0.9f;
-        if (itemSize > 0.9f)
+        float offset = 0.7f;
+        if (itemSize > 0.7f)
         {
             offset = itemSize / 2;
         }
@@ -157,7 +157,7 @@ public class ItemHandling : MonoBehaviour
                 Vector3 offsets = new(offset, 0, 0);
                 shelf.transform.position += offsets;
             }
-            originalX = shelf.transform.position.x + (shelfData.ShelfWidth / 2);
+            originalX = shelf.transform.position.x;
 
         }
         
