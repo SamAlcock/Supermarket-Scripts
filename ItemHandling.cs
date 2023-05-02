@@ -92,7 +92,6 @@ public class ItemHandling : MonoBehaviour
     {
         float itemSize = itemRenderer.bounds.size.x; // get item width
         float offset;
-        Debug.Log(itemSize);
         if (itemSize > 0.8f)
         {
             offset = itemSize / 2;
@@ -120,7 +119,7 @@ public class ItemHandling : MonoBehaviour
         float[] yOffset = shelfData.YOffset; // offsets for each shelf row 
         float xGap = renderer.bounds.size.x;
         float offset = GetOffset(renderer);
-        int shelves = iter; // Will need to be shelfData.YOffset.Length once other bugs have been fixed
+        int shelves = iter; // will need to be shelfData.YOffset.Length once other bugs have been fixed
         double loop = CalculateItemNumberDisplay(shelfData, renderer, offset);
         float rotation = GetRotation(shelf);
         float originalX;
@@ -137,14 +136,12 @@ public class ItemHandling : MonoBehaviour
                 gap = new(0, 0, xGap);
                 itemRotation = new(0, 90, 0);
                 offsets = new(0, 0, offset);
-                //shelf.transform.position += offsets; 
             }
             else
             {
                 gap = new(xGap, 0, 0);
                 itemRotation = new(0, 0, 0);
                 offsets = new(offset, 0, 0);
-                //shelf.transform.position += offsets;
             }
 
             if (rotation == 90 || rotation == 0)
@@ -160,14 +157,12 @@ public class ItemHandling : MonoBehaviour
                 gap = new(0, 0, xGap);
                 itemRotation = new(0, 90, 0);
                 offsets = new(0, 0, offset);
-                //shelf.transform.position += offsets;
             }
             else
             {
                 gap = new(xGap, 0, 0);
                 itemRotation = new(0, 0, 0);
                 offsets = new(offset, 0, 0);
-                //shelf.transform.position += offsets;
             }
             originalX = shelf.transform.position.x;
 
@@ -179,7 +174,6 @@ public class ItemHandling : MonoBehaviour
         for (int j = 0; j < loop; j++)
         {
             Instantiate(item, position - (offsets * j), Quaternion.Euler(itemRotation)); // create instance of current item
-            //item.transform.Rotate(0, rotation, 0, Space.Self); // may not need this
             position -= gap; // decrement by gap
 
         }
