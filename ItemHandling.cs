@@ -13,13 +13,25 @@ public class ItemHandling : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        System.Random rnd = new();
+
+        
+        
         for (int i = 0; i < shelves.Count; i++)
         {
+            int[] nums = { rnd.Next(items.Count), rnd.Next(items.Count), rnd.Next(items.Count), rnd.Next(items.Count) };
+
+            List<GameObject> currItems = new();
+
+            for (int x = 0; x < nums.Length; x++)
+            {
+                currItems.Add(items[nums[x]]);
+            }
+
             for (int j = 0; j < 4; j++)
             {
-                FillShelf(items[j], shelves[i], j);
+                FillShelf(currItems[j], shelves[i], j);
             }
-            
         }
     }
     public class ShelfData
@@ -167,16 +179,12 @@ public class ItemHandling : MonoBehaviour
             originalX = shelf.transform.position.x;
 
         }
-        
-
 
         Vector3 position = new Vector3(originalX + (shelfData.ShelfWidth / 2) - (xGap / 2), shelf.transform.position.y + yOffset[shelves], shelf.transform.position.z); // get starting coordinates of shelf row
         for (int j = 0; j < loop; j++)
         {
             Instantiate(item, position - (offsets * j), Quaternion.Euler(itemRotation)); // create instance of current item
             position -= gap; // decrement by gap
-
-        }
-        
+        }   
     }
 }
