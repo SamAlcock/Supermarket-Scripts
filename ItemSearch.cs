@@ -5,6 +5,8 @@ using UnityEngine;
 public class ItemSearch : MonoBehaviour
 {
     ItemHandling handlingData;
+    public GameObject searchItem;
+
     public void Main() 
     {
         GameObject displayText = GameObject.Find("Display Text");
@@ -12,7 +14,7 @@ public class ItemSearch : MonoBehaviour
 
         List<GameObject> items = new(handlingData.items);
 
-        GameObject searchItem = GetItemSearch(items);
+        searchItem = GetItemSearch(items);
 
         displayText.SetActive(false);
 
