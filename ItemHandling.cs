@@ -15,17 +15,17 @@ public class ItemHandling : MonoBehaviour
     {
         System.Random rnd = new();
 
-        
+        ItemSearch itemSearch = GetComponent<ItemSearch>();
         
         for (int i = 0; i < shelves.Count; i++)
         {
-            int[] nums = { rnd.Next(items.Count), rnd.Next(items.Count), rnd.Next(items.Count), rnd.Next(items.Count) };
+            int[] nums = { rnd.Next(items.Count), rnd.Next(items.Count), rnd.Next(items.Count), rnd.Next(items.Count) }; // length of nums should be the number of shelves 
 
             List<GameObject> currItems = new();
 
             for (int x = 0; x < nums.Length; x++)
             {
-                currItems.Add(items[nums[x]]);
+                currItems.Add(items[nums[x]]); // add items to current list based on random locations of list picked
             }
 
             for (int j = 0; j < 4; j++)
@@ -33,6 +33,8 @@ public class ItemHandling : MonoBehaviour
                 FillShelf(currItems[j], shelves[i], j);
             }
         }
+
+        itemSearch.Main();
     }
     public class ShelfData
     {
