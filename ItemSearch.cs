@@ -8,17 +8,15 @@ public class ItemSearch : MonoBehaviour
     public void Main() 
     {
         GameObject displayText = GameObject.Find("Display Text");
-        GameObject searchObject = GameObject.Find("Search Object");
         handlingData = GetComponent<ItemHandling>();
 
         List<GameObject> items = new(handlingData.items);
 
         GameObject searchItem = GetItemSearch(items);
 
-        searchObject.SetActive(false);
         displayText.SetActive(false);
 
-        StartCoroutine(DisplaySearch(searchItem, searchObject, displayText));
+        StartCoroutine(DisplaySearch(searchItem, displayText));
     }
 
     GameObject GetItemSearch(List<GameObject> items)
@@ -28,13 +26,12 @@ public class ItemSearch : MonoBehaviour
         return items[idx];
     }
 
-    IEnumerator DisplaySearch(GameObject searchItem, GameObject searchObject, GameObject displayText)
+    IEnumerator DisplaySearch(GameObject searchItem, GameObject displayText)
     {
-        Mesh mesh = searchItem.GetComponent<MeshFilter>().sharedMesh;
-        searchObject.GetComponent<MeshFilter>().sharedMesh = mesh;
-
-        Material material = searchItem.GetComponent<Material>();
-        searchObject.GetComponent<Renderer>().material = material;
+        GameObject searchObject = Instantiate(searchItem);
+        GameObject mainCamera = GameObject.Find("Main Camera");
+        searchObject.transform.SetParent(mainCamera.transform);
+        searchObject.transform.position = new Vector3(mainCamera.transform.position.x, mainCamera.transform.position.y, mainCamera.transform.position.z + 1);
 
         searchObject.SetActive(true);
         displayText.SetActive(true);
