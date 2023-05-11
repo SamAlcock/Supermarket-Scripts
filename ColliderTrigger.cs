@@ -5,7 +5,17 @@ using UnityEngine;
 public class ColliderTrigger : MonoBehaviour
 {
     ItemSearch itemSearch;
-    
+    PlayerInteract playerInteract;
+    bool clicked;
+    private void Start()
+    {
+        GameObject Player = GameObject.Find("Player");
+        playerInteract = Player.GetComponent<PlayerInteract>();
+    }
+    void Update()
+    {
+        clicked = playerInteract.clicked;
+    }
     private void OnTriggerEnter(Collider other)
     {
         GameObject Supermarket = GameObject.Find("Supermarket");
@@ -17,8 +27,10 @@ public class ColliderTrigger : MonoBehaviour
         if (target.name == otherName)
         {
             Debug.Log("Collided!");
+            if (clicked)
+            {
+                Debug.Log("Target found");
+            }
         }
-
-
     }
 }

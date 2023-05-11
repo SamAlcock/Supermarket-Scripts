@@ -32,4 +32,5 @@ public class PlayerMove : MonoBehaviour
     {
         moveInput = value.Get<Vector2>();
     }
+
 }

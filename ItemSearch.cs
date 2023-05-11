@@ -33,7 +33,7 @@ public class ItemSearch : MonoBehaviour
         GameObject searchObject = Instantiate(searchItem);
         GameObject mainCamera = GameObject.Find("Main Camera");
         searchObject.transform.SetParent(mainCamera.transform);
-        searchObject.transform.position = new Vector3(mainCamera.transform.position.x, mainCamera.transform.position.y, mainCamera.transform.position.z + 1);
+        searchObject.transform.position = new Vector3(mainCamera.transform.position.x, mainCamera.transform.position.y - 0.165f, mainCamera.transform.position.z + 1);
 
         searchObject.SetActive(true);
         displayText.SetActive(true);
