@@ -16,7 +16,7 @@ public class ColliderTrigger : MonoBehaviour
     {
         clicked = playerInteract.clicked;
     }
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         GameObject Supermarket = GameObject.Find("Supermarket");
         itemSearch = Supermarket.GetComponent<ItemSearch>();
@@ -26,7 +26,6 @@ public class ColliderTrigger : MonoBehaviour
 
         if (target.name == otherName)
         {
-            Debug.Log("Collided!");
             if (clicked)
             {
                 Debug.Log("Target found");

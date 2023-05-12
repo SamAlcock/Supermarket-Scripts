@@ -21,7 +21,7 @@ public class PlayerInteract : MonoBehaviour
     IEnumerator StartCooldown()
     {
         isAvailable = false;
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.1f);
         isAvailable = true;
         clicked = false;
     }
