@@ -8,8 +8,9 @@ using UnityEngine.UIElements;
 
 public class ItemHandling : MonoBehaviour
 {
-    public List<GameObject> items = new(); // items that will fill shelves
+    public List<GameObject> items = new(); // items that can fill shelves
     public List<GameObject> shelves = new(); // every shelf in supermarket
+    public List<GameObject> currItems = new(); // items that are in supermarket
     // Start is called before the first frame update
     void Start()
     {
@@ -21,7 +22,7 @@ public class ItemHandling : MonoBehaviour
         {
             int[] nums = { rnd.Next(items.Count), rnd.Next(items.Count), rnd.Next(items.Count), rnd.Next(items.Count) }; // length of nums should be the number of shelves 
 
-            List<GameObject> currItems = new();
+            
 
             for (int x = 0; x < nums.Length; x++)
             {

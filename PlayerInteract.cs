@@ -18,7 +18,7 @@ public class PlayerInteract : MonoBehaviour
         }
 
     }
-    IEnumerator StartCooldown()
+    IEnumerator StartCooldown() // Click cooldown to stop too much spamming
     {
         isAvailable = false;
         yield return new WaitForSeconds(0.1f);

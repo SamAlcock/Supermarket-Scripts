@@ -12,7 +12,7 @@ public class ItemSearch : MonoBehaviour
         GameObject displayText = GameObject.Find("Display Text");
         handlingData = GetComponent<ItemHandling>();
 
-        List<GameObject> items = new(handlingData.items);
+        List<GameObject> items = new(handlingData.currItems);
 
         searchItem = GetItemSearch(items);
 
