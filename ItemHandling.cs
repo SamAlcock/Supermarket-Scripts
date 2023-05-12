@@ -137,6 +137,7 @@ public class ItemHandling : MonoBehaviour
         double loop = CalculateItemNumberDisplay(shelfData, renderer, offset);
         float rotation = GetRotation(shelf);
         float originalX;
+        bool rotated = false;
 
         Vector3 gap = new();
         Vector3 itemRotation = new();
@@ -150,6 +151,7 @@ public class ItemHandling : MonoBehaviour
                 gap = new(0, 0, xGap);
                 itemRotation = new(0, 90, 0);
                 offsets = new(0, 0, offset);
+                rotated = true;
             }
             else
             {
@@ -171,6 +173,7 @@ public class ItemHandling : MonoBehaviour
                 gap = new(0, 0, xGap);
                 itemRotation = new(0, 90, 0);
                 offsets = new(0, 0, offset);
+                rotated = true;
             }
             else
             {
@@ -182,7 +185,17 @@ public class ItemHandling : MonoBehaviour
 
         }
 
-        Vector3 position = new Vector3(originalX + (shelfData.ShelfWidth / 2) - (xGap / 2), shelf.transform.position.y + yOffset[shelves], shelf.transform.position.z); // get starting coordinates of shelf row
+        Vector3 position = new();
+        if (rotated)
+        {
+            position = new Vector3(originalX, shelf.transform.position.y + yOffset[shelves], shelf.transform.position.z + (shelfData.ShelfWidth / 2) - (xGap / 2)); // get starting coordinates of shelf row for rotated shelves
+
+        }
+        else
+        {
+            position = new Vector3(originalX + (shelfData.ShelfWidth / 2) - (xGap / 2), shelf.transform.position.y + yOffset[shelves], shelf.transform.position.z); // get starting coordinates of shelf row for non-rotated shelves
+
+        }
         for (int j = 0; j < loop; j++)
         {
             Instantiate(item, position - (offsets * j), Quaternion.Euler(itemRotation)); // create instance of current item
