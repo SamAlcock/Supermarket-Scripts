@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
+using System.Linq;
 
 public class ItemHandling : MonoBehaviour
 {
     public List<GameObject> items = new(); // items that can fill shelves
     public List<GameObject> shelves = new(); // every shelf in supermarket
-    public List<GameObject> currItems = new(); // items that are in supermarket
+    public List<GameObject> itemsInSupermarket = new();
     // Start is called before the first frame update
     void Start()
     {
@@ -22,11 +23,12 @@ public class ItemHandling : MonoBehaviour
         {
             int[] nums = { rnd.Next(items.Count), rnd.Next(items.Count), rnd.Next(items.Count), rnd.Next(items.Count) }; // length of nums should be the number of shelves 
 
-            
+            List<GameObject> currItems = new(); // items that will go on shelf for specific iteration
 
             for (int x = 0; x < nums.Length; x++)
             {
                 currItems.Add(items[nums[x]]); // add items to current list based on random locations of list picked
+                itemsInSupermarket.Add(items[nums[x]]);
             }
 
             for (int j = 0; j < 4; j++)
@@ -34,6 +36,9 @@ public class ItemHandling : MonoBehaviour
                 FillShelf(currItems[j], shelves[i], j);
             }
         }
+        itemsInSupermarket = itemsInSupermarket.Distinct().ToList();
+
+        itemsInSupermarket.ForEach(Debug.Log);
 
         itemSearch.Main();
     }
