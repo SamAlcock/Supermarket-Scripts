@@ -5,8 +5,10 @@ using UnityEngine;
 public class ColliderTrigger : MonoBehaviour
 {
     ItemSearch itemSearch;
+    ItemHandling itemHandling;
     PlayerInteract playerInteract;
     bool clicked;
+    bool targetFound = false;
     private void Start()
     {
         GameObject Player = GameObject.Find("Player");
@@ -22,13 +24,22 @@ public class ColliderTrigger : MonoBehaviour
         itemSearch = Supermarket.GetComponent<ItemSearch>();
         GameObject target = itemSearch.searchItem;
 
-        string otherName = other.gameObject.name.Replace("(Clone)", ""); // Remove "(Clone)" from object names so they can be matched
+        string targetName = target.name.Replace("(Clone)(Clone)", "(Clone)"); // Remove "(Clone)" from target names so they can be matched - target name becomes (Clone)(Clone) as it's instantiating a clone
 
-        if (target.name == otherName)
+        if (targetName == other.gameObject.name)
         {
-            if (clicked)
+            if (clicked && !targetFound)
             {
                 Debug.Log("Target found"); // Target found if user is looking at target and clicks
+                
+                itemHandling = Supermarket.GetComponent<ItemHandling>();
+                List<GameObject> itemsInSupermarket = itemHandling.itemsInSupermarket;
+
+                for (int i = 0; i < itemsInSupermarket.Count; i++)
+                {
+                    Destroy(itemsInSupermarket[i]);
+                }
+                itemHandling.Main();
             }
         }
     }

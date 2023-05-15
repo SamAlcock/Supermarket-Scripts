@@ -6,19 +6,29 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class ItemHandling : MonoBehaviour
 {
     public List<GameObject> items = new(); // items that can fill shelves
     public List<GameObject> shelves = new(); // every shelf in supermarket
     public List<GameObject> itemsInSupermarket = new();
+    public List<GameObject> itemTypesInSupermarket = new();
     // Start is called before the first frame update
     void Start()
     {
+        Main();
+    }
+
+    public void Main()
+    {
+        itemsInSupermarket.Clear();
+        itemTypesInSupermarket.Clear();
+
         System.Random rnd = new();
 
         ItemSearch itemSearch = GetComponent<ItemSearch>();
-        
+
         for (int i = 0; i < shelves.Count; i++)
         {
             int[] nums = { rnd.Next(items.Count), rnd.Next(items.Count), rnd.Next(items.Count), rnd.Next(items.Count) }; // length of nums should be the number of shelves 
@@ -28,18 +38,14 @@ public class ItemHandling : MonoBehaviour
             for (int x = 0; x < nums.Length; x++)
             {
                 currItems.Add(items[nums[x]]); // add items to current list based on random locations of list picked
-                itemsInSupermarket.Add(items[nums[x]]);
             }
 
-            for (int j = 0; j < 4; j++)
+            for (int j = 0; j < 4; j++) // needs to be something like y_offset.Length
             {
                 FillShelf(currItems[j], shelves[i], j);
             }
         }
-        itemsInSupermarket = itemsInSupermarket.Distinct().ToList();
-
-        itemsInSupermarket.ForEach(Debug.Log);
-
+        itemTypesInSupermarket = itemsInSupermarket.Distinct().ToList(); // Remove duplicates to avoid biased target picking
         itemSearch.Main();
     }
     public class ShelfData
@@ -204,7 +210,7 @@ public class ItemHandling : MonoBehaviour
         }
         for (int j = 0; j < loop; j++)
         {
-            Instantiate(item, position - (offsets * j), Quaternion.Euler(itemRotation)); // create instance of current item
+            itemsInSupermarket.Add(Instantiate(item, position - (offsets * j), Quaternion.Euler(itemRotation))); // create instance of current item - need to have something = Instantiate(...) to be able to destroy
             position -= gap; // decrement by gap
         }   
     }

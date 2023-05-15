@@ -13,7 +13,6 @@ public class PlayerInteract : MonoBehaviour
         if (isAvailable)
         {
             clicked = true;
-            Debug.Log("Fired");
             StartCoroutine(StartCooldown());
         }
 

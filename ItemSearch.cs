@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ItemSearch : MonoBehaviour
 {
@@ -9,10 +11,25 @@ public class ItemSearch : MonoBehaviour
 
     public void Main() 
     {
-        GameObject displayText = GameObject.Find("Display Text");
+        GameObject displayText = GameObject.Find("Display Text"); // only works for first trial
+
+        if (displayText == null) // displayText is null after first trial - it's deactivated after trial and cannot be found using .Find 
+        {
+            GameObject[] texts = GameObject.FindObjectsOfType<GameObject>(true);
+
+            foreach (var text in texts)
+            {
+                if (text.name == "Display Text")
+                {
+                    displayText = text;
+                }
+            }
+        }
+
+        
         handlingData = GetComponent<ItemHandling>();
 
-        List<GameObject> items = new(handlingData.itemsInSupermarket);
+        List<GameObject> items = new(handlingData.itemTypesInSupermarket);
 
         searchItem = GetItemSearch(items);
 
@@ -32,7 +49,7 @@ public class ItemSearch : MonoBehaviour
     {
         GameObject searchObject = Instantiate(searchItem);
         GameObject mainCamera = GameObject.Find("Main Camera");
-        searchObject.transform.SetParent(mainCamera.transform);
+        searchObject.transform.SetParent(mainCamera.transform, false);
         searchObject.transform.position = new Vector3(mainCamera.transform.position.x, mainCamera.transform.position.y - 0.165f, mainCamera.transform.position.z + 1);
 
         searchObject.SetActive(true);
@@ -40,5 +57,6 @@ public class ItemSearch : MonoBehaviour
         yield return new WaitForSeconds(5f);
         searchObject.SetActive(false);
         displayText.SetActive(false);
+        //Destroy(searchObject);
     }
 }
