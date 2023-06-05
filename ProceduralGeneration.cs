@@ -8,13 +8,13 @@ using JetBrains.Annotations;
 public class ProceduralGeneration : MonoBehaviour
 {
 
-
     [SerializeField] bool visualiseGrid = true;
 
     GameObject positiveMarker;
     GameObject negativeMarker;
 
     public List<GameObject> shelves;
+    public List<Quaternion> shelvesRotation;
 
     // Start is called before the first frame update
     void Start()
@@ -41,6 +41,7 @@ public class ProceduralGeneration : MonoBehaviour
         List<GameObject> shelvesInArea = PopulateArea(grid, noiseMap, positiveMarker, negativeMarker, threshold); // Can be used in supermarket code for items
 
         shelves = ShelvesToList();
+        shelvesRotation = GetShelfParentRotation();
 
         Debug.Log(String.Join(", ", shelves));
         Debug.Log("Amount of shelves in area: " + shelves.Count);
@@ -299,6 +300,18 @@ public class ProceduralGeneration : MonoBehaviour
         }
 
         return shelves;
+    }
+
+    List<Quaternion> GetShelfParentRotation()
+    {
+        List<Quaternion> rotations = new();
+
+        foreach (GameObject shelf in GameObject.FindGameObjectsWithTag("Shelf"))
+        {
+            rotations.Add(shelf.GetComponentInParent<Transform>().rotation);
+        }
+
+        return rotations;
     }
 
 }

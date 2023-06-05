@@ -12,14 +12,17 @@ public class ItemHandling : MonoBehaviour
 {
     public List<GameObject> items = new(); // items that can fill shelves
     List<GameObject> shelves; // every shelf in supermarket
+
     public List<GameObject> itemsInSupermarket = new();
     public List<GameObject> itemTypesInSupermarket = new();
+
 
 
     public void Main()
     {
         ProceduralGeneration proceduralGeneration = GetComponent<ProceduralGeneration>();
         shelves = new(proceduralGeneration.shelves);
+        List<Quaternion> shelfRotation = new(proceduralGeneration.shelvesRotation);
 
         itemsInSupermarket.Clear();
         itemTypesInSupermarket.Clear();
@@ -41,7 +44,7 @@ public class ItemHandling : MonoBehaviour
 
             for (int j = 0; j < 4; j++) // needs to be something like y_offset.Length
             {
-                FillShelf(currItems[j], shelves[i], j);
+                FillShelf(currItems[j], shelves[i], j, shelfRotation[i]);
             }
         }
 
@@ -161,7 +164,7 @@ public class ItemHandling : MonoBehaviour
         float rotation = shelf.transform.eulerAngles.y;
         return rotation;
     }
-    void FillShelf(GameObject item, GameObject shelf, int iter)
+    void FillShelf(GameObject item, GameObject shelf, int iter, Quaternion shelfRotation)
     {
         ShelfData shelfData = DetermineObjectType(shelf);
         MeshRenderer renderer = item.GetComponent<MeshRenderer>();
@@ -171,7 +174,7 @@ public class ItemHandling : MonoBehaviour
         float offset = GetOffset(renderer);
         int shelves = iter; // will need to be shelfData.YOffset.Length once other bugs have been fixed
         double loop = CalculateItemNumberDisplay(shelfData, renderer, offset);
-        float rotation = GetRotation(shelf);
+        float rotation = GetRotation(shelf) + shelfRotation.y;
         float originalX;
         bool rotated = false;
 
