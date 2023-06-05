@@ -11,17 +11,16 @@ using Unity.VisualScripting;
 public class ItemHandling : MonoBehaviour
 {
     public List<GameObject> items = new(); // items that can fill shelves
-    public List<GameObject> shelves = new(); // every shelf in supermarket
+    List<GameObject> shelves; // every shelf in supermarket
     public List<GameObject> itemsInSupermarket = new();
     public List<GameObject> itemTypesInSupermarket = new();
-    // Start is called before the first frame update
-    void Start()
-    {
-        Main();
-    }
+
 
     public void Main()
     {
+        ProceduralGeneration proceduralGeneration = GetComponent<ProceduralGeneration>();
+        shelves = new(proceduralGeneration.shelves);
+
         itemsInSupermarket.Clear();
         itemTypesInSupermarket.Clear();
 
@@ -45,10 +44,35 @@ public class ItemHandling : MonoBehaviour
                 FillShelf(currItems[j], shelves[i], j);
             }
         }
-        itemTypesInSupermarket = itemsInSupermarket.Distinct().ToList(); // Remove duplicates to avoid biased target picking
+
+        //itemTypesInSupermarket = itemsInSupermarket.Distinct().ToList(); // Remove duplicates to avoid biased target picking
+
+        itemTypesInSupermarket = new(itemsInSupermarket);
+        itemTypesInSupermarket = RemoveDuplicates(itemTypesInSupermarket);
+
         itemSearch.Main();
     }
-    public class ShelfData
+
+    List<GameObject> RemoveDuplicates(List<GameObject> items)
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            for (int j = 0; j < items.Count; j++)
+            {
+                if (items[i].ToString() == items[j].ToString())
+                {
+                    items.Remove(items[j]);
+                    if(j > 0)
+                    {
+                        j--;
+                    }
+                    
+                }
+            }
+        }
+        return items;
+    }
+    public class ShelfData // attributes for shelves
     {
         public string name { get; set; }
         public float[] YOffset { get; set; }

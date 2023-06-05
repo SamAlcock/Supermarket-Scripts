@@ -15,7 +15,7 @@ public class ItemSearch : MonoBehaviour
 
         if (displayText == null) // displayText is null after first trial - it's deactivated after trial and cannot be found using .Find 
         {
-            GameObject[] texts = GameObject.FindObjectsOfType<GameObject>(true);
+            GameObject[] texts = GameObject.FindObjectsOfType<GameObject>(true); // Finds all GameObjects including deactivated ones
 
             foreach (var text in texts)
             {
