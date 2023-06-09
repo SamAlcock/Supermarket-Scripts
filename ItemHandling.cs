@@ -16,8 +16,6 @@ public class ItemHandling : MonoBehaviour
     public List<GameObject> itemsInSupermarket = new();
     public List<GameObject> itemTypesInSupermarket = new();
 
-
-
     public void Main()
     {
         ProceduralGeneration proceduralGeneration = GetComponent<ProceduralGeneration>();
@@ -81,9 +79,8 @@ public class ItemHandling : MonoBehaviour
         public float[] YOffset { get; set; }
         public float ShelfWidth { get; set; }
     }
-    ShelfData DetermineObjectType(GameObject shelf)
-    {
-        
+    ShelfData DetermineObjectType(GameObject shelf, Quaternion chunkRotation)
+    { 
         GameObject singleShelf;
 
         ShelfData shelfData = new ShelfData();
@@ -108,9 +105,8 @@ public class ItemHandling : MonoBehaviour
 
             singleShelf = GameObject.Find("Grated Shelf Width");
         }
-        else if (shelf.name.Contains("Fridge_4ttiif")) // Big fridge
+        else if (shelf.name.Contains("Fridge_4ttiif")) // Big fridge - not fully implemented
         {
-
             float[] yOffset = { shelf.transform.position.y + 0.15f, shelf.transform.position.y + 0.43f, shelf.transform.position.y + 0.75f, shelf.transform.position.y + 1.07f, shelf.transform.position.y + 1.39f };
 
             shelfData.YOffset = yOffset;
@@ -124,11 +120,21 @@ public class ItemHandling : MonoBehaviour
             singleShelf = GameObject.Find("Shelf_kicg9f_shelf01");
             float[] yOffset = { };
         }
-        
+
         MeshRenderer shelfRenderer = singleShelf.GetComponent<MeshRenderer>();
 
-        shelfData.ShelfWidth = shelfRenderer.bounds.size.x;
+        // Accounting for chunk rotation when getting shelf width - if chunk has been rotated the width would become the original depth
 
+        Debug.Log(shelf.transform.eulerAngles.y + " + " + chunkRotation.eulerAngles.y + " = " + shelf.transform.eulerAngles.y + chunkRotation.eulerAngles.y);
+
+        if (shelfData.name == "Normal shelf" && shelf.transform.eulerAngles.y + chunkRotation.eulerAngles.y == 0 || shelfData.name == "Normal shelf" && shelf.transform.eulerAngles.y + chunkRotation.eulerAngles.y == 180 || shelfData.name == "Grated shelf" && shelf.transform.eulerAngles.y + chunkRotation.eulerAngles.y == 90 || shelfData.name == "Grated shelf" && shelf.transform.eulerAngles.y + chunkRotation.eulerAngles.y == 270)
+        {
+            shelfData.ShelfWidth = shelfRenderer.bounds.size.z;
+        }
+        else
+        {
+            shelfData.ShelfWidth = shelfRenderer.bounds.size.x;
+        }
         return shelfData;
     }
 
@@ -166,7 +172,7 @@ public class ItemHandling : MonoBehaviour
     }
     void FillShelf(GameObject item, GameObject shelf, int iter, Quaternion shelfRotation)
     {
-        ShelfData shelfData = DetermineObjectType(shelf);
+        ShelfData shelfData = DetermineObjectType(shelf, shelfRotation);
         MeshRenderer renderer = item.GetComponent<MeshRenderer>();
 
         float[] yOffset = shelfData.YOffset; // offsets for each shelf row 
@@ -185,10 +191,10 @@ public class ItemHandling : MonoBehaviour
 
         if(shelfData.name == "Normal shelf")
         {
-            if (rotation == 0 || rotation == 360) // used to put items across shelf on z axis
+            if (rotation == 0 || rotation == 180) // used to put items across shelf on z axis
             {
                 gap = new(0, 0, xGap);
-                itemRotation = new(0, 90, 0);
+                itemRotation = new(0, 0, 0);
                 offsets = new(0, 0, offset);
                 rotated = true;
             }
@@ -199,7 +205,7 @@ public class ItemHandling : MonoBehaviour
                 offsets = new(offset, 0, 0);
             }
 
-            if (rotation == 90 || rotation == 0)
+            if (rotation == 90)
             {
                 itemRotation = new(0, shelf.transform.eulerAngles.y + 90, 0);
             }
@@ -210,7 +216,7 @@ public class ItemHandling : MonoBehaviour
             if (rotation == 90 || rotation == 270) // used to put items across shelf on z axis
             {
                 gap = new(0, 0, xGap);
-                itemRotation = new(0, 90, 0);
+                itemRotation = new(0, 0, 0);
                 offsets = new(0, 0, offset);
                 rotated = true;
             }
@@ -223,22 +229,21 @@ public class ItemHandling : MonoBehaviour
             originalX = shelf.transform.position.x;
 
         }
-
-        Vector3 position = new();
+        Debug.Log(shelfData.ShelfWidth);
+        Vector3 position;
         if (rotated)
         {
             position = new Vector3(originalX, shelf.transform.position.y + yOffset[shelves], shelf.transform.position.z + (shelfData.ShelfWidth / 2) - (xGap / 2)); // get starting coordinates of shelf row for rotated shelves
-
         }
         else
         {
             position = new Vector3(originalX + (shelfData.ShelfWidth / 2) - (xGap / 2), shelf.transform.position.y + yOffset[shelves], shelf.transform.position.z); // get starting coordinates of shelf row for non-rotated shelves
-
         }
         for (int j = 0; j < loop; j++)
         {
-            itemsInSupermarket.Add(Instantiate(item, position - (offsets * j), Quaternion.Euler(itemRotation))); // create instance of current item - need to have something = Instantiate(...) to be able to destroy
+            itemsInSupermarket.Add(Instantiate(item, position - (offsets * j), Quaternion.Euler(itemRotation)));
             position -= gap; // decrement by gap
-        }   
+        }
+        
     }
 }
