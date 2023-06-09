@@ -20,7 +20,7 @@ public class ItemHandling : MonoBehaviour
     {
         ProceduralGeneration proceduralGeneration = GetComponent<ProceduralGeneration>();
         shelves = new(proceduralGeneration.shelves);
-        List<Quaternion> shelfRotation = new(proceduralGeneration.shelvesRotation);
+        List<float> chunkRotation = new(proceduralGeneration.chunkRotation);
 
         itemsInSupermarket.Clear();
         itemTypesInSupermarket.Clear();
@@ -42,7 +42,7 @@ public class ItemHandling : MonoBehaviour
 
             for (int j = 0; j < 4; j++) // needs to be something like y_offset.Length
             {
-                FillShelf(currItems[j], shelves[i], j, shelfRotation[i]);
+                FillShelf(currItems[j], shelves[i], j, chunkRotation[i]);
             }
         }
 
@@ -79,7 +79,7 @@ public class ItemHandling : MonoBehaviour
         public float[] YOffset { get; set; }
         public float ShelfWidth { get; set; }
     }
-    ShelfData DetermineObjectType(GameObject shelf, Quaternion chunkRotation)
+    ShelfData DetermineObjectType(GameObject shelf, float chunkRotation)
     { 
         GameObject singleShelf;
 
@@ -125,9 +125,8 @@ public class ItemHandling : MonoBehaviour
 
         // Accounting for chunk rotation when getting shelf width - if chunk has been rotated the width would become the original depth
 
-        Debug.Log(shelf.transform.eulerAngles.y + " + " + chunkRotation.eulerAngles.y + " = " + shelf.transform.eulerAngles.y + chunkRotation.eulerAngles.y);
 
-        if (shelfData.name == "Normal shelf" && shelf.transform.eulerAngles.y + chunkRotation.eulerAngles.y == 0 || shelfData.name == "Normal shelf" && shelf.transform.eulerAngles.y + chunkRotation.eulerAngles.y == 180 || shelfData.name == "Grated shelf" && shelf.transform.eulerAngles.y + chunkRotation.eulerAngles.y == 90 || shelfData.name == "Grated shelf" && shelf.transform.eulerAngles.y + chunkRotation.eulerAngles.y == 270)
+        if (shelfData.name == "Normal shelf" && Mathf.Approximately(chunkRotation, 0) || shelfData.name == "Normal shelf" &&  Mathf.Approximately(chunkRotation, 180) || shelfData.name == "Grated shelf" && Mathf.Approximately(chunkRotation, 90) || shelfData.name == "Grated shelf" && Mathf.Approximately(chunkRotation, 270))
         {
             shelfData.ShelfWidth = shelfRenderer.bounds.size.z;
         }
@@ -135,6 +134,7 @@ public class ItemHandling : MonoBehaviour
         {
             shelfData.ShelfWidth = shelfRenderer.bounds.size.x;
         }
+        Debug.Log(shelfData.ShelfWidth + " chunkRotation = " + chunkRotation + " shelfData.name = " + shelfData.name);
         return shelfData;
     }
 
@@ -170,9 +170,9 @@ public class ItemHandling : MonoBehaviour
         float rotation = shelf.transform.eulerAngles.y;
         return rotation;
     }
-    void FillShelf(GameObject item, GameObject shelf, int iter, Quaternion shelfRotation)
+    void FillShelf(GameObject item, GameObject shelf, int iter, float chunkRotation)
     {
-        ShelfData shelfData = DetermineObjectType(shelf, shelfRotation);
+        ShelfData shelfData = DetermineObjectType(shelf, chunkRotation);
         MeshRenderer renderer = item.GetComponent<MeshRenderer>();
 
         float[] yOffset = shelfData.YOffset; // offsets for each shelf row 
@@ -180,7 +180,7 @@ public class ItemHandling : MonoBehaviour
         float offset = GetOffset(renderer);
         int shelves = iter; // will need to be shelfData.YOffset.Length once other bugs have been fixed
         double loop = CalculateItemNumberDisplay(shelfData, renderer, offset);
-        float rotation = GetRotation(shelf) + shelfRotation.y;
+        float rotation = chunkRotation;
         float originalX;
         bool rotated = false;
 
@@ -191,10 +191,10 @@ public class ItemHandling : MonoBehaviour
 
         if(shelfData.name == "Normal shelf")
         {
-            if (rotation == 0 || rotation == 180) // used to put items across shelf on z axis
+            if (Mathf.Approximately(rotation, 0) || Mathf.Approximately(rotation, 180)) // used to put items across shelf on z axis
             {
                 gap = new(0, 0, xGap);
-                itemRotation = new(0, 0, 0);
+                itemRotation = new(0, 90, 0);
                 offsets = new(0, 0, offset);
                 rotated = true;
             }
@@ -205,7 +205,7 @@ public class ItemHandling : MonoBehaviour
                 offsets = new(offset, 0, 0);
             }
 
-            if (rotation == 90)
+            if (Mathf.Approximately(rotation, 90))
             {
                 itemRotation = new(0, shelf.transform.eulerAngles.y + 90, 0);
             }
@@ -213,10 +213,10 @@ public class ItemHandling : MonoBehaviour
         }
         else
         {
-            if (rotation == 90 || rotation == 270) // used to put items across shelf on z axis
+            if (Mathf.Approximately(rotation, 90) || Mathf.Approximately(rotation, 270)) // used to put items across shelf on z axis
             {
                 gap = new(0, 0, xGap);
-                itemRotation = new(0, 0, 0);
+                itemRotation = new(0, 90, 0);
                 offsets = new(0, 0, offset);
                 rotated = true;
             }
@@ -229,7 +229,6 @@ public class ItemHandling : MonoBehaviour
             originalX = shelf.transform.position.x;
 
         }
-        Debug.Log(shelfData.ShelfWidth);
         Vector3 position;
         if (rotated)
         {

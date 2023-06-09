@@ -18,6 +18,7 @@ public class ColliderTrigger : MonoBehaviour
     {
         clicked = playerInteract.clicked; // Check if user has clicked
     }
+    /*
     private void OnTriggerStay(Collider other)
     {
         GameObject Supermarket = GameObject.Find("Supermarket");
@@ -42,5 +43,6 @@ public class ColliderTrigger : MonoBehaviour
                 itemHandling.Main();
             }
         }
-    }
+        
+    }*/
 }

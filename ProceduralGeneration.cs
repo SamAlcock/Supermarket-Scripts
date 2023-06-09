@@ -14,7 +14,7 @@ public class ProceduralGeneration : MonoBehaviour
     GameObject negativeMarker;
 
     public List<GameObject> shelves;
-    public List<Quaternion> shelvesRotation;
+    public List<float> chunkRotation;
 
     // Start is called before the first frame update
     void Start()
@@ -41,7 +41,7 @@ public class ProceduralGeneration : MonoBehaviour
         List<GameObject> shelvesInArea = PopulateArea(grid, noiseMap, positiveMarker, negativeMarker, threshold); // Can be used in supermarket code for items
 
         shelves = ShelvesToList();
-        shelvesRotation = GetShelfParentRotation();
+        chunkRotation = GetChunkYRotation();
 
         Debug.Log(String.Join(", ", shelves));
         Debug.Log("Amount of shelves in area: " + shelves.Count);
@@ -302,13 +302,13 @@ public class ProceduralGeneration : MonoBehaviour
         return shelves;
     }
 
-    List<Quaternion> GetShelfParentRotation()
+    List<float> GetChunkYRotation()
     {
-        List<Quaternion> rotations = new();
+        List<float> rotations = new();
 
         foreach (GameObject shelf in GameObject.FindGameObjectsWithTag("Shelf"))
         {
-            rotations.Add(shelf.GetComponentInParent<Transform>().rotation);
+            rotations.Add(shelf.GetComponentInParent<Transform>().transform.eulerAngles.y);
         }
 
         return rotations;
