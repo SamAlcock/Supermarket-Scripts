@@ -130,9 +130,13 @@ public class ItemHandling : MonoBehaviour
         {
             shelfData.ShelfWidth = shelfRenderer.bounds.size.z;
         }
-        else
+        else if (shelfData.name == "Grated shelf" && Mathf.Approximately(chunkRotation, 0) || shelfData.name == "Grated shelf" && Mathf.Approximately(chunkRotation, 180))
         {
             shelfData.ShelfWidth = shelfRenderer.bounds.size.x;
+        }
+        else
+        {
+            shelfData.ShelfWidth = shelfRenderer.bounds.size.z;
         }
         Debug.Log(shelfData.ShelfWidth + " chunkRotation = " + chunkRotation + " shelfData.name = " + shelfData.name);
         return shelfData;

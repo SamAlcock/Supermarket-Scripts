@@ -85,6 +85,8 @@ public class ProceduralGeneration : MonoBehaviour
         System.Random rnd = new System.Random();
         float seed = rnd.Next(0, 100000) + 0.01f; // random seed to sample new Perlin noise each time
 
+        // float seed = 1258 + 0.01f; // random seed to sample new Perlin noise each time
+
         Debug.Log("Seed is: " + seed);
 
         for (int xIndex = 0; xIndex < mapWidth; xIndex++)
@@ -232,7 +234,9 @@ public class ProceduralGeneration : MonoBehaviour
         for (int i = 0; i < middlePoints.Count; i++) // generate chunk from middle point to avoid overlap
         {
 
-            int rotation = GetRandomRotation();
+            //int rotation = GetRandomRotation();
+
+            int rotation = 0;
 
             Vector3 position = middlePoints[i];
 
