@@ -185,6 +185,7 @@ public class ItemHandling : MonoBehaviour
         int shelves = iter; // will need to be shelfData.YOffset.Length once other bugs have been fixed
         double loop = CalculateItemNumberDisplay(shelfData, renderer, offset);
         float rotation = chunkRotation;
+
         float originalX;
         bool rotated = false;
 

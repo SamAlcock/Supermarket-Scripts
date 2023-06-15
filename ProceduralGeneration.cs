@@ -225,6 +225,7 @@ public class ProceduralGeneration : MonoBehaviour
         GameObject chunk2 = GameObject.Find("Chunk 2");
         GameObject chunk3 = GameObject.Find("Chunk 3");
         GameObject chunk4 = GameObject.Find("Chunk 4");
+        GameObject chunk5 = GameObject.Find("Chunk 5");
 
         List<GameObject> currChunks = new();
 
@@ -234,7 +235,7 @@ public class ProceduralGeneration : MonoBehaviour
         for (int i = 0; i < middlePoints.Count; i++) // generate chunk from middle point to avoid overlap
         {
 
-            //int rotation = GetRandomRotation();
+            // int rotation = GetRandomRotation();
 
             int rotation = 0;
 
@@ -250,7 +251,7 @@ public class ProceduralGeneration : MonoBehaviour
             }
             else if (middleNoise[i] >= 0.5 && middleNoise[i] < 0.75)
             {
-                currChunks.Add(Instantiate(chunk3, position, Quaternion.Euler(0, rotation, 0)));
+                currChunks.Add(Instantiate(chunk5, position, Quaternion.Euler(0, rotation, 0)));
             }
             else if (middleNoise[i] >= 0.75 && middleNoise[i] < 1)
             {
@@ -262,6 +263,7 @@ public class ProceduralGeneration : MonoBehaviour
         chunk2.SetActive(false);
         chunk3.SetActive(false);
         chunk4.SetActive(false);
+        chunk5.SetActive(false);
 
         return shelves;
     }
