@@ -11,6 +11,9 @@ using Unity.VisualScripting;
 public class ItemHandling : MonoBehaviour
 {
     public List<GameObject> items = new(); // items that can fill shelves
+    [SerializeField] List<GameObject> breadItems = new();
+    [SerializeField] List<GameObject> alcoholItems = new();
+
     List<GameObject> shelves; // every shelf in supermarket
 
     public List<GameObject> itemsInSupermarket = new();
@@ -21,9 +24,12 @@ public class ItemHandling : MonoBehaviour
         ProceduralGeneration proceduralGeneration = GetComponent<ProceduralGeneration>();
         shelves = new(proceduralGeneration.shelves);
         List<float> chunkRotation = new(proceduralGeneration.chunkRotation);
+        List<string> biomes = new(proceduralGeneration.biomes);
 
         itemsInSupermarket.Clear();
         itemTypesInSupermarket.Clear();
+
+
 
         System.Random rnd = new();
 
@@ -31,10 +37,11 @@ public class ItemHandling : MonoBehaviour
 
         for (int i = 0; i < shelves.Count; i++)
         {
+            items = GetCurrentBiome(i, biomes);
+
             int[] nums = { rnd.Next(items.Count), rnd.Next(items.Count), rnd.Next(items.Count), rnd.Next(items.Count) }; // length of nums should be the number of shelves 
 
             List<GameObject> currItems = new(); // items that will go on shelf for specific iteration
-
             for (int x = 0; x < nums.Length; x++)
             {
                 currItems.Add(items[nums[x]]); // add items to current list based on random locations of list picked
@@ -52,6 +59,18 @@ public class ItemHandling : MonoBehaviour
         itemTypesInSupermarket = RemoveDuplicates(itemTypesInSupermarket);
 
         itemSearch.Main();
+    }
+
+    List<GameObject> GetCurrentBiome(int i, List<string> biomes)
+    {
+        if (biomes[i] == "Bread")
+        {
+            return breadItems;
+        }
+        else
+        {
+            return alcoholItems;
+        }
     }
 
     List<GameObject> RemoveDuplicates(List<GameObject> items)
@@ -138,7 +157,7 @@ public class ItemHandling : MonoBehaviour
         {
             shelfData.ShelfWidth = shelfRenderer.bounds.size.z;
         }
-        Debug.Log(shelfData.ShelfWidth + " chunkRotation = " + chunkRotation + " shelfData.name = " + shelfData.name);
+        //Debug.Log(shelfData.ShelfWidth + " chunkRotation = " + chunkRotation + " shelfData.name = " + shelfData.name);
         return shelfData;
     }
 

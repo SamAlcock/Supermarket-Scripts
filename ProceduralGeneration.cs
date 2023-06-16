@@ -42,9 +42,8 @@ public class ProceduralGeneration : MonoBehaviour
 
         shelves = ShelvesToList();
         chunkRotation = GetChunkYRotation();
-        biomes = DetermineSupermarketBiome(grid, noiseMap);
+        biomes = DetermineSupermarketBiome(grid, noiseMap, shelves);
 
-        Debug.Log(String.Join(", ", shelves));
         Debug.Log("Amount of shelves in area: " + shelves.Count);
 
         itemHandling.Main();
@@ -120,7 +119,6 @@ public class ProceduralGeneration : MonoBehaviour
                     {
                         int[] operators = GetOperators(i);
                         middlePoints.Add(grid[x + operators[0], z + operators[1]]); // Add coordinates for each quadrant
-                        Debug.Log(String.Join(", ", middlePoints));
                     }
                 }
             }
@@ -324,8 +322,9 @@ public class ProceduralGeneration : MonoBehaviour
         return rotations;
     }
 
-    List<string> DetermineSupermarketBiome(Vector3[,] grid, float[,] noiseMap)
+    List<string> DetermineSupermarketBiome(Vector3[,] grid, float[,] noiseMap, List<GameObject> shelves)
     {
+        List<string> chunkBiomes = new();
         List<string> biomes = new();
 
         /* 
@@ -344,21 +343,27 @@ public class ProceduralGeneration : MonoBehaviour
 
         float[] biomeNoise = new float[chunks.Count];
 
-        for (int i = 0; i < chunks.Count; i++)
+        for (int i = 0; i < chunks.Count; i++) // for every chunk
         {
             biomeNoise[i] = noiseMap[i, 0];
 
-            if (biomeNoise[i] < 0.5)
+            if (biomeNoise[i] < 0.4)
             {
-                biomes.Add("Bread");
+                for (int j = 0; j < chunks[i].transform.childCount; j++) // add biome name to list for each shelf in chunk
+                {
+                    biomes.Add("Bread");
+                }
             }
             else
             {
-                biomes.Add("Alcohol");
+                for (int j = 0; j < chunks[i].transform.childCount; j++)
+                {
+                    biomes.Add("Alcohol");
+                }
             }
         }
 
-
+        Debug.Log(string.Join(", ", biomes));
 
         return biomes;
     }
