@@ -15,6 +15,7 @@ public class ProceduralGeneration : MonoBehaviour
 
     public List<GameObject> shelves;
     public List<float> chunkRotation;
+    public List<string> biomes;
 
     // Start is called before the first frame update
     void Start()
@@ -36,12 +37,12 @@ public class ProceduralGeneration : MonoBehaviour
         {
             VisualiseGrid(grid, noiseMap, threshold);
         }
-        
 
         List<GameObject> shelvesInArea = PopulateArea(grid, noiseMap, positiveMarker, negativeMarker, threshold); // Can be used in supermarket code for items
 
         shelves = ShelvesToList();
         chunkRotation = GetChunkYRotation();
+        biomes = DetermineSupermarketBiome(grid, noiseMap);
 
         Debug.Log(String.Join(", ", shelves));
         Debug.Log("Amount of shelves in area: " + shelves.Count);
@@ -118,7 +119,8 @@ public class ProceduralGeneration : MonoBehaviour
                     for (int i = 0; i < 4; i++)
                     {
                         int[] operators = GetOperators(i);
-                        middlePoints.Add(grid[x + operators[0], z + operators[1]]);
+                        middlePoints.Add(grid[x + operators[0], z + operators[1]]); // Add coordinates for each quadrant
+                        Debug.Log(String.Join(", ", middlePoints));
                     }
                 }
             }
@@ -265,6 +267,8 @@ public class ProceduralGeneration : MonoBehaviour
         chunk4.SetActive(false);
         chunk5.SetActive(false);
 
+
+
         return shelves;
     }
 
@@ -318,6 +322,45 @@ public class ProceduralGeneration : MonoBehaviour
         }
 
         return rotations;
+    }
+
+    List<string> DetermineSupermarketBiome(Vector3[,] grid, float[,] noiseMap)
+    {
+        List<string> biomes = new();
+
+        /* 
+         * Get sample from noise map for each chunk 
+         * Noise value determines which list of items to use (biomes)
+         * Send that list to ItemHandling
+         */
+        List<GameObject> chunks = new();
+
+        
+        
+        foreach(GameObject chunk in GameObject.FindGameObjectsWithTag("Chunk")) // loop here used to be able to get biome for all chunks if chunk number changes in future
+        {
+            chunks.Add(chunk);
+        }
+
+        float[] biomeNoise = new float[chunks.Count];
+
+        for (int i = 0; i < chunks.Count; i++)
+        {
+            biomeNoise[i] = noiseMap[i, 0];
+
+            if (biomeNoise[i] < 0.5)
+            {
+                biomes.Add("Bread");
+            }
+            else
+            {
+                biomes.Add("Alcohol");
+            }
+        }
+
+
+
+        return biomes;
     }
 
 }
