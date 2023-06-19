@@ -221,6 +221,17 @@ public class ProceduralGeneration : MonoBehaviour
 
         List<GameObject> shelves = new();
 
+        /* 
+         * To add a new chunk:
+         * - Create a new chunk in prefabs - needs to be able to fit in 'FloorSmall' (I normally add FloorSmall to chunk when making it for guidelines, and then delete it from the chunk when I'm done)
+         * - Add it to the environment - may be able to just reference it straight from prefabs instead
+         * - Find gameobject
+         * - Add else if statement to block below - will need to adjust noise values in all statements below
+         * - Deactivate the chunk at the bottom of the function
+         * 
+         * When making chunks, make sure the only direct children of the chunk are shelves - it messes up biome generations otherwise!
+         */
+
         GameObject chunk1 = GameObject.Find("Chunk 1");
         GameObject chunk2 = GameObject.Find("Chunk 2");
         GameObject chunk3 = GameObject.Find("Chunk 3");
@@ -241,21 +252,25 @@ public class ProceduralGeneration : MonoBehaviour
 
             Vector3 position = middlePoints[i];
 
-            if (middleNoise[i] < 0.25)
+            if (middleNoise[i] < 0.15)
             {
                 currChunks.Add(Instantiate(chunk1, position, Quaternion.Euler(0, rotation, 0)));
             }
-            else if (middleNoise[i] >= 0.25 && middleNoise[i] < 0.5)
+            else if (middleNoise[i] >= 0.15 && middleNoise[i] < 0.3)
             {
                 currChunks.Add(Instantiate(chunk2, position, Quaternion.Euler(0, rotation, 0)));
             }
-            else if (middleNoise[i] >= 0.5 && middleNoise[i] < 0.75)
+            else if (middleNoise[i] >= 0.3 && middleNoise[i] < 0.55)
             {
-                currChunks.Add(Instantiate(chunk5, position, Quaternion.Euler(0, rotation, 0)));
+                currChunks.Add(Instantiate(chunk3, position, Quaternion.Euler(0, rotation, 0)));
             }
-            else if (middleNoise[i] >= 0.75 && middleNoise[i] < 1)
+            else if (middleNoise[i] >= 0.55 && middleNoise[i] < 0.8)
             {
                 currChunks.Add(Instantiate(chunk4, position, Quaternion.Euler(0, rotation, 0)));
+            }
+            else if (middleNoise[i] >= 0.8 && middleNoise[i] < 1)
+            {
+                currChunks.Add(Instantiate(chunk5, position, Quaternion.Euler(0, rotation, 0)));
             }
         }
 
@@ -322,15 +337,16 @@ public class ProceduralGeneration : MonoBehaviour
         return rotations;
     }
 
-    List<string> DetermineSupermarketBiome(Vector3[,] grid, float[,] noiseMap, List<GameObject> shelves)
+    List<string> DetermineSupermarketBiome(Vector3[,] grid, float[,] noiseMap, List<GameObject> shelves) // BUG - same chunk types cause adding extra data to biomes list e.g. 3 chunk 4s in a 12 shelf supermarket will make biomes.Count = 15
     {
-        List<string> chunkBiomes = new();
         List<string> biomes = new();
 
         /* 
-         * Get sample from noise map for each chunk 
-         * Noise value determines which list of items to use (biomes)
-         * Send that list to ItemHandling
+         * Adding new supermarket biomes
+         * - Add new else if statement in the same format as one below - adjust biomeNoise accordingly (noise value is always between 0 and 1) e.g. bread currently has 0 -> 0.4 assigned to it, next one could be  >=0.4, <0.6
+         * - In ItemHandling.cs, create a new list where breadItems and alcoholItems are with [SerializeField]
+         * - In ItemHandling.cs, there's a function called GetCurrentBiome - add an else if statement in the same layout as the bread one, just with the new biome name
+         * - In the inspector under supermarket, drag the objects for the biome into the list
          */
         List<GameObject> chunks = new();
 
@@ -346,7 +362,7 @@ public class ProceduralGeneration : MonoBehaviour
         for (int i = 0; i < chunks.Count; i++) // for every chunk
         {
             biomeNoise[i] = noiseMap[i, 0];
-
+            Debug.Log("Child count: " + chunks[i].transform.childCount);
             if (biomeNoise[i] < 0.4)
             {
                 for (int j = 0; j < chunks[i].transform.childCount; j++) // add biome name to list for each shelf in chunk
@@ -363,7 +379,7 @@ public class ProceduralGeneration : MonoBehaviour
             }
         }
 
-        Debug.Log(string.Join(", ", biomes));
+        Debug.Log(string.Join(", ", biomes) + " Length: " + biomes.Count);
 
         return biomes;
     }
