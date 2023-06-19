@@ -113,7 +113,7 @@ public class ProceduralGeneration : MonoBehaviour
         {
             for (int z = 0; z < grid.GetLength(1); z++)
             {
-                if (x % 9 == 0 && x != 0 && x != grid.GetLength(0) - 1 && z % 9 == 0 && z != 0 && z != grid.GetLength(1) - 1)
+                if (x == grid.GetLength(0) / 4 && z == grid.GetLength(0) / 4)
                 {
                     for (int i = 0; i < 4; i++)
                     {
@@ -137,7 +137,7 @@ public class ProceduralGeneration : MonoBehaviour
         {
             for (int z = 0; z < grid.GetLength(1); z++)
             {
-                if (x % 9 == 0 && x != 0 && x != grid.GetLength(0) - 1 && z % 9 == 0 && z != 0 && z != grid.GetLength(1) - 1)
+                if (x == grid.GetLength(0) / 4 && z == grid.GetLength(0) / 4)
                 {
                     for (int i = 0; i < 4; i++)
                     {
@@ -158,14 +158,14 @@ public class ProceduralGeneration : MonoBehaviour
         GameObject coordPoint = GameObject.Find("Coordinate point");
         List<GameObject> currInstance = new();
         List<Color> colors = new();
-
+        Debug.Log(grid.GetLength(0) + ", " + grid.GetLength(1));
         for (int x = 0; x < grid.GetLength(0); x++)
         {
             for (int z = 0; z < grid.GetLength(1); z++)
             {
-                if (x % 9 == 0 && x != 0 && x != grid.GetLength(0) - 1 && z % 9 == 0 && z != 0 && z != grid.GetLength(1) - 1)
+                if (x == grid.GetLength(0) / 4 && z == grid.GetLength(0) / 4)
                 {
-                    
+
                     for (int i = 0; i < 4; i++)
                     {
                         int[] operators = GetOperators(i);
@@ -175,7 +175,6 @@ public class ProceduralGeneration : MonoBehaviour
                         currInstance.Last().GetComponent<MeshRenderer>().material.SetColor("_Color", colors.Last());
                     }
                 }
-                
 
             }
 
@@ -190,23 +189,23 @@ public class ProceduralGeneration : MonoBehaviour
 
         if (key == 0)
         {
-            operator1 = 5;
-            operator2 = 5;
+            operator1 = 0;
+            operator2 = 0;
         }
         else if (key == 1)
         {
-            operator1 = 5;
-            operator2 = -5;
+            operator1 = 8;
+            operator2 = 0;
         }
         else if (key == 2)
         {
-            operator1 = -5;
-            operator2 = 5;
+            operator1 = 0;
+            operator2 = 8;
         }
         else if (key == 3)
         {
-            operator1 = -5;
-            operator2 = -5;
+            operator1 = 8;
+            operator2 = 8;
         }
 
         operators[0] = operator1;
@@ -223,7 +222,7 @@ public class ProceduralGeneration : MonoBehaviour
 
         /* 
          * To add a new chunk:
-         * - Create a new chunk in prefabs - needs to be able to fit in 'FloorSmall' (I normally add FloorSmall to chunk when making it for guidelines, and then delete it from the chunk when I'm done)
+         * - Create a new chunk in prefabs - needs to be able to fit in 1.25x1.25 area
          * - Add it to the environment - may be able to just reference it straight from prefabs instead
          * - Find gameobject
          * - Add else if statement to block below - will need to adjust noise values in all statements below
