@@ -215,10 +215,17 @@ public class ItemHandling : MonoBehaviour
 
         if(shelfData.name == "Normal shelf")
         {
-            if (Mathf.Approximately(rotation, 0) || Mathf.Approximately(rotation, 180)) // used to put items across shelf on z axis
+            if (Mathf.Approximately(rotation, 0)) // used to put items across shelf on z axis
             {
                 gap = new(0, 0, xGap);
                 itemRotation = new(0, 90, 0);
+                offsets = new(0, 0, offset);
+                rotated = true;
+            }
+            else if (Mathf.Approximately(rotation, 180))
+            {
+                gap = new(0, 0, xGap);
+                itemRotation = new(0, 270, 0);
                 offsets = new(0, 0, offset);
                 rotated = true;
             }
