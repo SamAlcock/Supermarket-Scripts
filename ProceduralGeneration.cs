@@ -24,6 +24,8 @@ public class ProceduralGeneration : MonoBehaviour
 
         ItemHandling itemHandling = GetComponent<ItemHandling>();
 
+
+        // Markers positions are the furthest point in the area - are used to calculate noise map locations
         positiveMarker = GameObject.Find("Marker ++");
         negativeMarker = GameObject.Find("Marker --");
 
@@ -44,7 +46,7 @@ public class ProceduralGeneration : MonoBehaviour
         chunkRotation = GetChunkYRotation();
         biomes = DetermineSupermarketBiome(grid, noiseMap, shelves);
 
-        Debug.Log("Amount of shelves in area: " + shelves.Count);
+        Debug.Log("Amount of shelves in area: " + shelves.Count); // If you want the same amount of shelves every time, edit chunks to have same amount of shelves as each other
 
         itemHandling.Main();
     }
@@ -84,8 +86,7 @@ public class ProceduralGeneration : MonoBehaviour
 
         System.Random rnd = new System.Random();
         float seed = rnd.Next(0, 100000) + 0.01f; // random seed to sample new Perlin noise each time
-
-        // float seed = 1258 + 0.01f; // random seed to sample new Perlin noise each time
+        // Can change seed to a specific number + 0.01 instead of random if you don't want random generation
 
         Debug.Log("Seed is: " + seed);
 
@@ -105,7 +106,7 @@ public class ProceduralGeneration : MonoBehaviour
         
         return noiseMap;
     }
-    List<Vector3> GetMiddlePoints(Vector3[,] grid)
+    List<Vector3> GetMiddlePoints(Vector3[,] grid) // Finds locations of middle points in area - would need to change if statment if room size needs adjusting
     {
         List<Vector3> middlePoints = new();
 
@@ -129,7 +130,7 @@ public class ProceduralGeneration : MonoBehaviour
 
     }
 
-    List<float> GetMiddleNoise(Vector3[,] grid, float[,] noiseMap)
+    List<float> GetMiddleNoise(Vector3[,] grid, float[,] noiseMap) // Gets noise samples from middle points - if statement would need to be changed if room size needs adjusting
     {
         List<float> middleNoise = new();
 
@@ -152,7 +153,7 @@ public class ProceduralGeneration : MonoBehaviour
         return middleNoise;
     }
 
-    void VisualiseGrid(Vector3[,] grid, float[,] noiseMap, float threshold)
+    void VisualiseGrid(Vector3[,] grid, float[,] noiseMap, float threshold) // Visualises middle points on supermarket floor - can enable/disable in inspector
     {
 
         GameObject coordPoint = GameObject.Find("Coordinate point");
@@ -182,6 +183,8 @@ public class ProceduralGeneration : MonoBehaviour
 
     int[] GetOperators(int key) // used to find middle points in each quadrant
     {
+        // Used to find all middle points needed without looping through whole thing to slightly speed up execution time
+
         int[] operators = new int[2];
         int operator1 = 0;
         int operator2 = 0;
@@ -244,7 +247,7 @@ public class ProceduralGeneration : MonoBehaviour
         for (int i = 0; i < middlePoints.Count; i++) // generate chunk from middle point to avoid overlap
         {
 
-            // int rotation = GetRandomRotation();
+            // int rotation = GetRandomRotation(); - function would be executed here if it worked as intended
 
             int rotation = 0;
 
@@ -283,8 +286,10 @@ public class ProceduralGeneration : MonoBehaviour
         return shelves;
     }
 
-    int GetRandomRotation()
+    int GetRandomRotation() // Not currently in use - would cause bugs with item placement
     {
+        // Picks random number - number decides what rotation it will be (0, 90, 180, 270)
+
         System.Random rnd = new System.Random();
 
         int rotationKey = rnd.Next(0, 4);
@@ -344,7 +349,7 @@ public class ProceduralGeneration : MonoBehaviour
          * - Add new else if statement in the same format as one below - adjust biomeNoise accordingly (noise value is always between 0 and 1) e.g. bread currently has 0 -> 0.4 assigned to it, next one could be  >=0.4, <0.6
          * - In ItemHandling.cs, create a new list where breadItems and alcoholItems are with [SerializeField]
          * - In ItemHandling.cs, there's a function called GetCurrentBiome - add an else if statement in the same layout as the bread one, just with the new biome name
-         * - In the inspector under supermarket, drag the objects for the biome into the list
+         * - In the inspector under supermarket, drag the objects for the biome into the list - minimum list length is 4 (it'll throw out of range errors at anything below 4)
          */
         List<GameObject> chunks = new();
 

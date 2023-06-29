@@ -11,6 +11,8 @@ using Unity.VisualScripting;
 public class ItemHandling : MonoBehaviour
 {
     public List<GameObject> items = new(); // items that can fill shelves
+
+    // Items for each biome
     [SerializeField] List<GameObject> breadItems = new();
     [SerializeField] List<GameObject> alcoholItems = new();
     [SerializeField] List<GameObject> fridgeItems = new();
