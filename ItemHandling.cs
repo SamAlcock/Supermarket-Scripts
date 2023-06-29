@@ -13,6 +13,7 @@ public class ItemHandling : MonoBehaviour
     public List<GameObject> items = new(); // items that can fill shelves
     [SerializeField] List<GameObject> breadItems = new();
     [SerializeField] List<GameObject> alcoholItems = new();
+    [SerializeField] List<GameObject> fridgeItems = new();
 
     List<GameObject> shelves; // every shelf in supermarket
 
@@ -67,9 +68,13 @@ public class ItemHandling : MonoBehaviour
         {
             return breadItems;
         }
-        else
+        else if (biomes[i] == "Alcohol")
         {
             return alcoholItems;
+        }
+        else
+        {
+            return fridgeItems;
         }
     }
 

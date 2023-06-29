@@ -158,7 +158,6 @@ public class ProceduralGeneration : MonoBehaviour
         GameObject coordPoint = GameObject.Find("Coordinate point");
         List<GameObject> currInstance = new();
         List<Color> colors = new();
-        Debug.Log(grid.GetLength(0) + ", " + grid.GetLength(1));
         for (int x = 0; x < grid.GetLength(0); x++)
         {
             for (int z = 0; z < grid.GetLength(1); z++)
@@ -361,21 +360,32 @@ public class ProceduralGeneration : MonoBehaviour
         for (int i = 0; i < chunks.Count; i++) // for every chunk
         {
             biomeNoise[i] = noiseMap[i, 0];
-            Debug.Log("Child count: " + chunks[i].transform.childCount);
-            if (biomeNoise[i] < 0.4)
+            if (!chunks[i].name.Contains("Chunk 5"))
             {
-                for (int j = 0; j < chunks[i].transform.childCount; j++) // add biome name to list for each shelf in chunk
+                if (biomeNoise[i] < 0.4)
                 {
-                    biomes.Add("Bread");
+                    for (int j = 0; j < chunks[i].transform.childCount; j++) // add biome name to list for each shelf in chunk
+                    {
+                        biomes.Add("Bread");
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < chunks[i].transform.childCount; j++)
+                    {
+                        biomes.Add("Alcohol");
+                    }
                 }
             }
+
             else
             {
                 for (int j = 0; j < chunks[i].transform.childCount; j++)
                 {
-                    biomes.Add("Alcohol");
+                    biomes.Add("Fridge");
                 }
             }
+            
         }
 
         Debug.Log(string.Join(", ", biomes) + " Length: " + biomes.Count);
