@@ -263,11 +263,11 @@ public class ProceduralGeneration : MonoBehaviour
             {
                 currChunks.Add(Instantiate(chunk3, position, Quaternion.Euler(0, rotation, 0)));
             }
-            else if (middleNoise[i] >= 0.55 && middleNoise[i] < 0.8)
+            else if (middleNoise[i] >= 0.55 && middleNoise[i] < 0.65)
             {
                 currChunks.Add(Instantiate(chunk4, position, Quaternion.Euler(0, rotation, 0)));
             }
-            else if (middleNoise[i] >= 0.8 && middleNoise[i] < 1)
+            else if (middleNoise[i] >= 0.65 && middleNoise[i] < 1)
             {
                 currChunks.Add(Instantiate(chunk5, position, Quaternion.Euler(0, rotation, 0)));
             }
